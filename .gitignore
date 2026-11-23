@@ -1,0 +1,20 @@
+# recordings and patient data
+6sentences/
+drive-download-*/
+data/
+*.wav
+*.npy
+
+# supervisor's code
+NeMoSimplified/
+
+# environment and generated files
+.venv/
+__pycache__/
+outputs/
+samples/
+.DS_Store
+
+# trained models (later)
+*.pt
+*.ckpt

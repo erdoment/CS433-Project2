@@ -1,3 +1,4 @@
 paths:
   original_audio: "/home/hdutheil/Documents/EPFL/ML/Audio_files/Audio Files/" # Path to original audio directory 
   resampled_audio: "/home/hdutheil/Documents/EPFL/ML/Audio_files/resampled/" # Path to where to the resampled audio directory
+  opensmile_feature_prediction_path: "/home/hdutheil/Documents/EPFL/ML/Audio_files/opensmile_extractions/"

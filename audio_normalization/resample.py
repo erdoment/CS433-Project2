@@ -3,6 +3,9 @@ from scipy.signal import resample_poly
 import soundfile as sf
 import os
 import logging
+import yaml
+from tqdm import tqdm
+from paths import CONFIG_PATH
 
 logger: logging.Logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -15,7 +18,7 @@ def resample(input_path: str, output_path: str, target_rate: int = 16_000) -> No
     Parameters:
     - input_path (str): Path to the input .wav file.
     - output_path (str): Path where the resampled .wav file will be saved.
-    - target_rate (int): Desired target sample rate (e.g., 16000, 22050, 44100).
+    - target_rate (int): Desired target sample rate
     """
     audio_data, original_rate = sf.read(input_path)
     
@@ -35,18 +38,24 @@ def resample(input_path: str, output_path: str, target_rate: int = 16_000) -> No
 
 
 if __name__ == '__main__':
-    # TODO: change this to point to a yaml config file to modularize
-    path: os.PathLike = "/home/hdutheil/Documents/EPFL/ML/Audio_files/Audio Files/"
-    output_dir: os.PathLike = "/home/hdutheil/Documents/EPFL/ML/Audio_files/resampled"
+    with open(CONFIG_PATH) as config_path:
+        config = yaml.safe_load(config_path)
+
+    path: os.PathLike = config['paths']['original_audio']
+    output_dir: os.PathLike = config['paths']['resampled_audio']
 
     os.makedirs(output_dir, exist_ok=True)
 
     if os.path.isdir(path):
         logger.info("Resampling directory")
-        for file in os.scandir(path):
-            file_name, extension = os.path.splitext(file.name)
-            if file.is_file() and extension == '.wav':
-                resample(file.path, os.path.join(output_dir, file.name), 16_000)
+        valid_files = [
+                    file for file in os.scandir(path) 
+                    if file.is_file() and file.name.lower().endswith('.wav')
+                ]
+
+        for file in tqdm(valid_files, desc="Resampling audio files"):
+                    output_path = os.path.join(output_dir, file.name)
+                    resample(file.path, output_path, 16_000)
 
     elif os.path.isfile(path):
         *_, file_name, extension = file.path.split()

@@ -11,7 +11,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-def resample(input_path: str, output_path: str, target_rate: int = 16_000) -> None:
+def resample(input_path: os.PathLike, output_path: os.PathLike, target_rate: int = 16_000) -> None:
     """
     Resamples a .wav audio file to a specified sample rate.
     
@@ -58,10 +58,10 @@ if __name__ == '__main__':
                     resample(file.path, output_path, 16_000)
 
     elif os.path.isfile(path):
-        *_, file_name, extension = file.path.split()
-        if file.is_file() and extension == '.wav':
+        _, file = os.path.split(path)
+        if file.lower().endswith('.wav'):
             logger.info("Resampling file")
-            resample(path, os.path.join(output_dir, file_name), 16_000)
+            resample(path, os.path.join(output_dir, file), 16_000)
         else:
             logger.error("Not a .wav file, can't process it")
     else:
